@@ -1,0 +1,59 @@
+<html>
+<head>
+    <script>
+        const webSocket = new WebSocket('ws://localhost:8080/websocket');
+
+        webSocket.onopen = event => {
+            alert('onopen');
+        };
+
+        webSocket.onmessage = evt => {
+            const fileReader = new FileReader();
+            var array = [];
+            fileReader.onload = function (e) {
+                alert('onmessage, ' + e.target.result);
+                console.log(e.data);
+                var bytes = new Uint8Array(e.target.result);
+                var data = "";
+                var len = bytes.byteLength;
+                for (var i = 0; i < len; ++i) {
+                    data += String.fromCharCode(bytes[i]);
+                }
+                var img = document.getElementById("image");
+                img.src = "data:image/jpeg;base64,"+window.btoa(data);
+                console.log(new Uint8Array(e.target.result)[0]);
+            };
+
+            var ffsk = fileReader.readAsArrayBuffer(evt.data);
+            console.log(ffsk + 'waterfuck');
+            console.log(result + " " + result.length)
+            alert('onmessage, ' + evt.data);
+            console.log(evt.data);
+            var bytes = new Uint8Array(evt.data);
+            var data = "";
+            var len = bytes.byteLength;
+            for (var i = 0; i < len; ++i) {
+                data += String.fromCharCode(bytes[i]);
+            }
+            //var img = document.getElementById("image");
+            //img.src = "data:image/jpeg;base64,"+window.btoa(data);
+        };
+
+
+
+        webSocket.onclose = event => {
+            alert('onclose');
+        };
+
+        function sendData() {
+            alert("send hello mf");
+            webSocket.send("hello motherfucker");
+        }
+    </script>
+</head>
+<body>
+
+    <button onclick="sendData()">test</button>
+    <img id="image"></<img>
+</body>
+</html>
