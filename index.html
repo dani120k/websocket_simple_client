@@ -8,6 +8,8 @@
         };
 
         webSocket.onmessage = evt => {
+
+            console.log(evt)
             const fileReader = new FileReader();
             var array = [];
             fileReader.onload = function (e) {
@@ -16,28 +18,28 @@
                 var bytes = new Uint8Array(e.target.result);
                 var data = "";
                 var len = bytes.byteLength;
+                var check_error = "$ERROR";
+                var input_string = "";
                 for (var i = 0; i < len; ++i) {
                     data += String.fromCharCode(bytes[i]);
+                    input_string += String.fromCharCode(bytes[i]);
                 }
-                var img = document.getElementById("image");
-                img.src = "data:image/jpeg;base64,"+window.btoa(data);
-                console.log(new Uint8Array(e.target.result)[0]);
+                if (input_string === check_error){
+                    document.getElementById('read_field').value = "Error why trying to get picture"
+                } else {
+                    var raz = document.getElementById("file").value.split(".").pop();
+                    var img = document.getElementById("image");
+                    img.src = "data:image/"+ raz +";base64,"+window.btoa(data);
+                    console.log(new Uint8Array(e.target.result)[0]);
+                    document.getElementById('read_field').value = "Showing " + document.getElementById('file').value
+                }
             };
 
             var ffsk = fileReader.readAsArrayBuffer(evt.data);
-            console.log(ffsk + 'waterfuck');
-            console.log(result + " " + result.length)
-            alert('onmessage, ' + evt.data);
-            console.log(evt.data);
-            var bytes = new Uint8Array(evt.data);
-            var data = "";
-            var len = bytes.byteLength;
-            for (var i = 0; i < len; ++i) {
-                data += String.fromCharCode(bytes[i]);
-            }
-            //var img = document.getElementById("image");
-            //img.src = "data:image/jpeg;base64,"+window.btoa(data);
+
         };
+
+
 
 
 
@@ -45,15 +47,20 @@
             alert('onclose');
         };
 
-        function sendData() {
-            alert("send hello mf");
-            webSocket.send("hello motherfucker");
+        function sendData(e) {
+            alert("send " + e);
+            webSocket.send(e);
+            alert("wtf")
         }
     </script>
 </head>
 <body>
 
-    <button onclick="sendData()">test</button>
-    <img id="image"></<img>
+        <textarea id="read_field"readonly></textarea>
+        <textarea id="file"></textarea>
+        <input type="submit" value="Show" onclick="sendData(document.getElementById('file').value)" /></p>
+        <img id="image">
+
+
 </body>
 </html>
